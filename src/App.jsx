@@ -1,31 +1,88 @@
 import './App.css';
-import{ useState } from 'react'; //saving data
+import { useState } from 'react'; 
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "./firebase"; 
+//saving data
 
 function App() {
-const [task, setTask] = useState("");
-const [tasks, setTasks] = useState([]);
-const [username, setUsername] = useState("");
-const [displayName, setDisplayName] = useState("");
+  const [task, setTask] = useState("");
+  const [tasks, setTasks] = useState([]);
+  const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   return (
-    <div>
-      <h1 className="h1">ניהול משימות עם GPT</h1>
-      <p>ברוכה הבאה לפרויקט הראשון שלך ב-React 🎉</p>
+    <div className={isLoggedIn ? "main-screen" : "login-screen"}>
+      {!isLoggedIn ? (
+        // login screen
+        <div className="login-container">
+          <div className="login-box">
 
-      <input 
-      type="text"//simple text input
-      value={task} //using jsx->{task},what appears in the input=task
-      onChange={(e) => setTask(e.target.value)} //onChange event to update task state, e=event,e.target.value=the value of the input
-      placeholder="כתבי משימה כאן" 
-        />
-       <input 
-      type="text"//simple text input
-      value={username} //using jsx->{task},what appears in the input=task
-      onChange={(e) => setUsername(e.target.value)} //onChange event to update task state, e=event,e.target.value=the value of the input
-      placeholder="כתבי שם כאן" 
-        />
-      <button onClick={() => {setDisplayName(username)}}>הצג שמך</button>
-      {displayName && <p>השם שלך: {displayName}</p>}
+            {/* left side – image */}
+            <div className="login-image">
+            <img src="/planlogin.jpg" alt="login visual" />
+
+
+            </div>
+
+            {/* right side – form */}
+            <div className="login-form">
+              <h3 className="login-title">Create Account</h3>
+
+              <input
+                type="email"
+                className="email-input"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <input
+                type="password"
+                className="password-input"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                className="login-btn"
+                onClick={() => setIsLoggedIn(true)}
+              >
+                Sign Up
+              </button>
+
+              <p className="login-footer">
+                Already have an account? <span className="login-link">Log in here</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // task management screen
+        <div className="tasks-screen">
+          <h1 className="tasks-title">My Planner</h1>
+          <p className="tasks-subtitle">welcome back</p>
+
+          <input
+            type="text"
+            className="task-input"
+            value={task}
+            onChange={(e) => setTask(e.target.value)}
+            placeholder="Add a new task"
+          />
+          <input
+            type="text"
+            className="username-input"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter your name"
+          />
+          <button className="show-name-btn" onClick={() => setDisplayName(username)}> show name</button>
+          {displayName && <p className="displayed-name">
+            Welcome: {displayName}</p>}
+        </div>
+      )}
     </div>
   );
 }
