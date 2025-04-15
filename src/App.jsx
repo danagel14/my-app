@@ -1,8 +1,6 @@
 import './App.css';
-import { useState } from 'react'; 
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "./firebase"; 
-//saving data
+import { useState } from 'react';
+import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from "firebase/auth";
 
 function App() {
   const [task, setTask] = useState("");
@@ -13,21 +11,46 @@ function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("התחברות הצליחה עם גוגל:", user.displayName, user.email);
+      setUsername(user.displayName);
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("שגיאה בהתחברות עם גוגל:", error.message);
+    }
+
+    const handleFacebookLogin = async () => {
+      const provider = new FacebookAuthProvider();
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log("התחברות הצליחה עם פייסבוק:", user.displayName, user.email);
+        setUsername(user.displayName);
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error("שגיאה בהתחברות עם פייסבוק:", error.message);
+      }
+    };
+    
+  };
+
   return (
     <div className={isLoggedIn ? "main-screen" : "login-screen"}>
       {!isLoggedIn ? (
-        // login screen
         <div className="login-container">
           <div className="login-box">
 
-            {/* left side – image */}
+            {/* התמונה בצד ימין */}
             <div className="login-image">
-            <img src="/planlogin.jpg" alt="login visual" />
-
-
+              <img src="/planlogin.jpg" alt="login visual" />
             </div>
 
-            {/* right side – form */}
+            {/* הטופס בצד שמאל */}
             <div className="login-form">
               <h3 className="login-title">Create Account</h3>
 
@@ -50,6 +73,20 @@ function App() {
                 onClick={() => setIsLoggedIn(true)}
               >
                 Sign Up
+                <i class="bi bi-box-arrow-in-left"></i>
+              </button>
+              <br>
+              </br>
+              {}
+              <button className="google-btn" onClick={handleGoogleLogin}>
+               Login With Google
+               <i className="bi bi-google ms-2"></i>
+              </button>
+              <br>
+              </br>
+              <button className="google-btn" onClick={handleFacebookLogin}>
+               Login With Fackbook
+               <i className="bi bi-facebook"></i>
               </button>
 
               <p className="login-footer">
@@ -59,10 +96,9 @@ function App() {
           </div>
         </div>
       ) : (
-        // task management screen
         <div className="tasks-screen">
           <h1 className="tasks-title">My Planner</h1>
-          <p className="tasks-subtitle">welcome back</p>
+          <p className="tasks-subtitle">Welcome back</p>
 
           <input
             type="text"
@@ -78,9 +114,8 @@ function App() {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your name"
           />
-          <button className="show-name-btn" onClick={() => setDisplayName(username)}> show name</button>
-          {displayName && <p className="displayed-name">
-            Welcome: {displayName}</p>}
+          <button className="show-name-btn" onClick={() => setDisplayName(username)}>Show name</button>
+          {displayName && <p className="displayed-name">Welcome: {displayName}</p>}
         </div>
       )}
     </div>
